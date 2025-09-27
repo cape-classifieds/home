@@ -1,0 +1,235 @@
+    body {
+      font-family: "Times New Roman", Georgia, serif;
+      background: #f8f1d4; /* yellowed paper */
+      color: #1a1a1a;
+      margin: 20px;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    header {
+      text-align: center;
+      border-bottom: 3px double #000;
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin: 0;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #111;
+    }
+
+    header p {
+      margin: 3px 0;
+      font-size: 13px;
+      color: #444;
+      font-style: italic;
+    }
+
+    .classifieds {
+      column-gap: 30px;
+      columns: 1; /* default = 1 column (phone & small screens) */
+    }
+
+/**
+    .classifieds {
+      column-gap: 25px;
+      columns: 3;
+    }
+**/
+
+    .section {
+      break-inside: avoid;
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .section h2 {
+      font-size: 17px;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-bottom: 2px dotted #555;
+      margin: 12px 0 6px;
+      padding-bottom: 2px;
+      color: #111;
+      letter-spacing: 0.5px;
+    }
+
+    /* Regular ad style */
+    .ad {
+      margin-bottom: 12px;
+      padding: 10px;
+      position: relative;
+      background: #fbf7e6;
+      border: 1px solid rgba(0,0,0,0.4);
+      border-radius: 2px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+      text-align: justify;
+      transform: rotate(-0.5deg);
+    }
+
+    .ad strong {
+      font-weight: bold;
+      color: #000;
+    }
+
+    /* Premium Ad style */
+    .highlight {
+      display: inline-block;
+      width: 100%;
+      border: 2px solid #000;
+      background: #fdfcf6;
+      padding: 12px;
+      margin: 12px 0 16px;
+      font-weight: bold;
+      position: relative;
+      box-shadow: 4px 4px 8px rgba(0,0,0,0.25);
+      transform: rotate(0.6deg);
+      font-size: 15px;
+    }
+
+    .highlight span.icon {
+      font-size: 20px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* SOLD overlay */
+    .sold::after {
+      content: "SOLD";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-size: 38px;
+      font-weight: bold;
+      color: rgba(120, 0, 0, 0.35);
+      letter-spacing: 3px;
+      white-space: nowrap;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    }
+
+    /* TAKEN overlay (for rentals/accommodation) */
+    .taken::after {
+      content: "TAKEN";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(25deg);
+      font-size: 38px;
+      font-weight: bold;
+      color: rgba(0, 60, 150, 0.35); /* deep blue tone */
+      letter-spacing: 3px;
+      white-space: nowrap;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    }
+
+    /* FOUND overlay (for rentals/accommodation) */
+    .found::after {
+      content: "Found";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-size: 38px;
+      font-weight: bold;
+      color: rgba(0, 60, 150, 0.35); /* deep blue tone */
+      letter-spacing: 3px;
+      white-space: nowrap;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    }
+
+
+    /* Paper grain + aging overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('https://www.transparenttextures.com/patterns/old-mathematics.png');
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Ink bleed / smudge effect */
+    .ad, .highlight {
+      background-blend-mode: multiply;
+      background-image: radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
+      background-size: 3px 3px;
+    }
+
+    /* Footer Ad Invite */
+    .advertise {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 35px;
+      border-top: 2px dotted #444;
+      padding-top: 12px;
+      color: #222;
+      font-style: italic;
+    }
+
+    .advertise img {
+      width: 14px;
+      height: 14px;
+      vertical-align: middle;
+      margin-left: 4px;
+      opacity: 0.85;
+    }
+
+    /* WhatsApp icon styling */
+    .whatsapp-icon {
+      width: 22px;
+      height: 22px;
+      vertical-align: middle;
+      margin-left: 6px;
+      margin-right: 2px;
+      opacity: 0.85;
+      transition: all 0.2s ease;
+      filter: sepia(0.3) brightness(0.9);
+    }
+    
+    .whatsapp-link:hover .whatsapp-icon {
+      opacity: 1;
+      transform: scale(1.1);
+      filter: sepia(0) brightness(1);
+    }
+
+    /* Medium screens (tablets, laptops) */
+    @media (min-width: 800px) {
+      .classifieds {
+      columns: 2;
+      }
+    }
+
+    /* Large desktops */
+    @media (min-width: 1400px) {
+      .classifieds {
+      columns: 3;
+      }
+    }
+
+/**
+    /* Responsive */
+    @media (max-width: 900px) {
+      .classifieds { columns: 2 !important; }
+    }
+
+    @media (max-width: 600px) {
+      .classifieds { columns: 1 !important; }
+      body { margin: 15px; font-size: 16px; }
+      header h1 { font-size: 22px; }
+      .highlight { text-align: left; }
+      .whatsapp-icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+**/
