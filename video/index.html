@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Media Video Hub</title>
+  <style>
+    /* CSS Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Base Styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f9f9f9;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Dark Theme Variables */
+    body.dark-theme {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --bg-tertiary: #2d2d2d;
+      --text-primary: #ffffff;
+      --text-secondary: #aaaaaa;
+      --text-tertiary: #888888;
+      --accent-color: #bb86fc;
+      --accent-secondary: #03dac6;
+      --border-color: #333333;
+      --shadow-color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Light Theme Variables */
+    body:not(.dark-theme) {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f9f9f9;
+      --bg-tertiary: #f1f1f1;
+      --text-primary: #333333;
+      --text-secondary: #606060;
+      --text-tertiary: #888888;
+      --accent-color: #1a73e8;
+      --accent-secondary: #0b8043;
+      --border-color: #dddddd;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Apply Theme Variables */
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    /* Header & Footer */
+    .blue {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    /* Main Layout */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* Video Grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .video-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Video Card */
+    .video-card {
+      background: var(--bg-primary);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+    }
+
+    .video-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px var(--shadow-color);
+    }
+
+    .video-thumbnail {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      background-color: #000;
+    }
+
+    .video-thumbnail img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-card-info {
+      padding: 1rem;
+    }
+
+    .video-card-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      color: var(--text-primary);
+    }
+
+    .video-card-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Video Player Section */
+    .video-player-section {
+      display: none;
+    }
+
+    .video-player-section.active {
+      display: block;
+    }
+
+    /* Video Container */
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      margin-bottom: 1rem;
+      background-color: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Video Details */
+    .video-details {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .video-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .video-meta {
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .video-channel {
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    /* Video Actions */
+    .video-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: var(--bg-tertiary);
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      color: var(--text-primary);
+    }
+
+    .btn:hover {
+      background-color: var(--border-color);
+    }
+
+    .btn.like.active {
+      background-color: rgba(30, 136, 229, 0.2);
+      color: var(--accent-color);
+    }
+
+    .btn.dislike.active {
+      background-color: rgba(229, 57, 53, 0.2);
+      color: #e53935;
+    }
+
+    .count {
+      font-weight: 600;
+    }
+
+    /* Video Description */
+    .video-description {
+      background-color: var(--bg-tertiary);
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-line;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+
+    /* Comments Section */
+    .comments-section {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      border: 1px solid var(--border-color);
+    }
+
+    #comments-count {
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .add-comment {
+      margin-bottom: 1.5rem;
+    }
+
+    #comment-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 1rem;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    #comment-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    #comment-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .comment {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .comment:last-child {
+      border-bottom: none;
+    }
+
+    .comment-author {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--text-primary);
+    }
+
+    .comment-text {
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .comment-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .comment-action {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .comment-action:hover {
+      color: var(--accent-color);
+    }
+
+    /* Back Button */
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: var(--bg-tertiary);
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      color: var(--text-primary);
+    }
+
+    .back-button:hover {
+      background-color: var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="blue">
+    <h1 class="bold">Social Media Video Hub</h1>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+      🌙
+    </button>
+  </header>
+
+  <main>
+    <!-- Video Grid -->
+    <section class="video-grid" id="video-grid">
+      <!-- Video cards will be populated by JavaScript -->
+    </section>
+
+    <!-- Video Player Section -->
+    <section class="video-player-section" id="video-player">
+      <button class="back-button" id="back-button">← Back to Videos</button>
+      
+      <!-- Video -->
+      <div class="video-container">
+        <iframe 
+          id="video-iframe"
+          src="" 
+          title="YouTube video player" 
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin" 
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <!-- Video Info -->
+      <section class="video-details">
+        <h1 class="video-title" id="video-title">Cool Video Title</h1>
+
+        <!-- Views + Date -->
+        <p class="video-meta">
+          <span id="views">1,234,567</span> views • <span id="upload-date">Sep 19, 2025</span>
+        </p>
+
+        <p class="video-channel">Uploaded by <strong id="channel-name">Channel Name</strong></p>
+        
+        <!-- Buttons Row -->
+        <div class="video-actions">
+          <button class="btn like" id="like-btn">👍 Like <span class="count" id="like-count">12,345</span></button>
+          <button class="btn dislike" id="dislike-btn">👎 Dislike <span class="count" id="dislike-count">123</span></button>
+          <button class="btn share" id="share-btn">🔗 Share</button>
+          <button class="btn save" id="save-btn">💾 Save</button>
+        </div>
+
+        <!-- Description -->
+        <p class="video-description" id="video-description">
+          1,234,096 views  Apr 16, 2019  #GuyMartin #Formula1
+          Guy Martin and his Tyco BMW Superbike take on David Coulthard and a Red Bull RB8 Formula 1 car in a series of head-to-head challenges including a drag race, a brake test, a slalom and a circuit race
+          Welcome to the only official Guy Martin Proper YouTube channel. Make yourself a cup of tea or twenty & follow every race, every build and every country Guy visits. Fair play.
+        </p>
+      </section>
+
+      <!-- Comments Section -->
+      <section class="comments-section">
+        <h2 id="comments-count">3 Comments</h2>
+
+        <!-- Add Comment -->
+        <div class="add-comment">
+          <input 
+            type="text" 
+            id="comment-input" 
+            placeholder="Add a comment..." />
+        </div>
+
+        <!-- Comments List -->
+        <div id="comments-list">
+          <!-- Filled by JavaScript -->
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="blue">
+    <p>&copy; 2025 Video Hub. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Video data
+    const videos = [
+      {
+        id: "6njgZ_7yLQc",
+        title: "Guy Martin vs David Coulthard: Superbike vs F1 Car",
+        views: "1,234,567",
+        uploadDate: "Apr 16, 2019",
+        channel: "Guy Martin Proper",
+        likes: "12,345",
+        dislikes: "123",
+        description: "Guy Martin and his Tyco BMW Superbike take on David Coulthard and a Red Bull RB8 Formula 1 car in a series of head-to-head challenges including a drag race, a brake test, a slalom and a circuit race. Welcome to the only official Guy Martin Proper YouTube channel. Make yourself a cup of tea or twenty & follow every race, every build and every country Guy visits. Fair play.",
+        thumbnail: "https://img.youtube.com/vi/6njgZ_7yLQc/maxresdefault.jpg"
+      },
+      {
+        id: "dQw4w9WgXcQ",
+        title: "Never Gonna Give You Up - Rick Astley",
+        views: "1,456,789,012",
+        uploadDate: "Oct 25, 2009",
+        channel: "Rick Astley",
+        likes: "15,678,901",
+        dislikes: "234,567",
+        description: "The official video for Rick Astley's Never Gonna Give You Up, remastered in 4K.",
+        thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
+      },
+      {
+        id: "9bZkp7q19f0",
+        title: "PSY - GANGNAM STYLE (강남스타일) M/V",
+        views: "4,567,890,123",
+        uploadDate: "Jul 15, 2012",
+        channel: "officialpsy",
+        likes: "23,456,789",
+        dislikes: "345,678",
+        description: "PSY - GANGNAM STYLE (강남스타일) M/V. The most viewed video on YouTube.",
+        thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg"
+      },
+      {
+        id: "kJQP7kiw5Fk",
+        title: "Luis Fonsi - Despacito ft. Daddy Yankee",
+        views: "7,890,123,456",
+        uploadDate: "Jan 12, 2017",
+        channel: "LuisFonsiVEVO",
+        likes: "45,678,901",
+        dislikes: "567,890",
+        description: "Luis Fonsi - Despacito ft. Daddy Yankee. The music video that broke all records.",
+        thumbnail: "https://img.youtube.com/vi/kJQP7kiw5Fk/maxresdefault.jpg"
+      }
+    ];
+
+    // DOM Elements
+    const videoGrid = document.getElementById('video-grid');
+    const videoPlayerSection = document.getElementById('video-player');
+    const videoIframe = document.getElementById('video-iframe');
+    const videoTitle = document.getElementById('video-title');
+    const views = document.getElementById('views');
+    const uploadDate = document.getElementById('upload-date');
+    const channelName = document.getElementById('channel-name');
+    const likeCount = document.getElementById('like-count');
+    const dislikeCount = document.getElementById('dislike-count');
+    const videoDescription = document.getElementById('video-description');
+    const backButton = document.getElementById('back-button');
+    const likeBtn = document.getElementById('like-btn');
+    const dislikeBtn = document.getElementById('dislike-btn');
+    const shareBtn = document.getElementById('share-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const commentInput = document.getElementById('comment-input');
+    const commentsList = document.getElementById('comments-list');
+    const commentsCount = document.getElementById('comments-count');
+    const themeToggle = document.getElementById('theme-toggle');
+
+    // Sample comments
+    const sampleComments = [
+      { author: "John Doe", text: "This is an amazing video! Thanks for sharing.", likes: 12 },
+      { author: "Jane Smith", text: "I've watched this so many times. Never gets old!", likes: 8 },
+      { author: "Alex Johnson", text: "Can't believe how cool this is. Mind blown!", likes: 5 }
+    ];
+
+    // Initialize the page
+    function init() {
+      renderVideoGrid();
+      setupEventListeners();
+      initTheme();
+    }
+
+    // Initialize theme
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggle.textContent = '☀️';
+      } else {
+        document.body.classList.remove('dark-theme');
+        themeToggle.textContent = '🌙';
+      }
+    }
+
+    // Toggle theme
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+      if (document.body.classList.contains('dark-theme')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '☀️';
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '🌙';
+      }
+    }
+
+    // Render the video grid
+    function renderVideoGrid() {
+      videoGrid.innerHTML = '';
+      
+      videos.forEach(video => {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        videoCard.dataset.videoId = video.id;
+        
+        videoCard.innerHTML = `
+          <div class="video-thumbnail">
+            <img src="${video.thumbnail}" alt="${video.title}">
+          </div>
+          <div class="video-card-info">
+            <h3 class="video-card-title">${video.title}</h3>
+            <p class="video-card-meta">${video.channel} • ${video.views} views</p>
+          </div>
+        `;
+        
+        videoGrid.appendChild(videoCard);
+      });
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // Video card clicks
+      document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const videoId = card.dataset.videoId;
+          playVideo(videoId);
+        });
+      });
+      
+      // Back button
+      backButton.addEventListener('click', () => {
+        videoPlayerSection.classList.remove('active');
+      });
+      
+      // Like/Dislike buttons
+      likeBtn.addEventListener('click', toggleLike);
+      dislikeBtn.addEventListener('click', toggleDislike);
+      
+      // Share button
+      shareBtn.addEventListener('click', shareVideo);
+      
+      // Save button
+      saveBtn.addEventListener('click', saveVideo);
+      
+      // Comment input
+      commentInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && commentInput.value.trim() !== '') {
+          addComment(commentInput.value.trim());
+          commentInput.value = '';
+        }
+      });
+      
+      // Theme toggle
+      themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    // Play a video
+    function playVideo(videoId) {
+      const video = videos.find(v => v.id === videoId);
+      
+      if (video) {
+        videoIframe.src = `https://www.youtube.com/embed/${video.id}`;
+        videoTitle.textContent = video.title;
+        views.textContent = video.views;
+        uploadDate.textContent = video.uploadDate;
+        channelName.textContent = video.channel;
+        likeCount.textContent = video.likes;
+        dislikeCount.textContent = video.dislikes;
+        videoDescription.textContent = video.description;
+        
+        // Reset like/dislike buttons
+        likeBtn.classList.remove('active');
+        dislikeBtn.classList.remove('active');
+        
+        // Load comments
+        loadComments();
+        
+        // Show video player section
+        videoPlayerSection.classList.add('active');
+        
+        // Scroll to top
+        window.scrollTo(0, 0);
+      }
+    }
+
+    // Toggle like
+    function toggleLike() {
+      if (likeBtn.classList.contains('active')) {
+        likeBtn.classList.remove('active');
+        likeCount.textContent = (parseInt(likeCount.textContent.replace(/,/g, '')) - 1).toLocaleString();
+      } else {
+        likeBtn.classList.add('active');
+        likeCount.textContent = (parseInt(likeCount.textContent.replace(/,/g, '')) + 1).toLocaleString();
+        
+        // If dislike was active, remove it
+        if (dislikeBtn.classList.contains('active')) {
+          dislikeBtn.classList.remove('active');
+          dislikeCount.textContent = (parseInt(dislikeCount.textContent.replace(/,/g, '')) - 1).toLocaleString();
+        }
+      }
+    }
+
+    // Toggle dislike
+    function toggleDislike() {
+      if (dislikeBtn.classList.contains('active')) {
+        dislikeBtn.classList.remove('active');
+        dislikeCount.textContent = (parseInt(dislikeCount.textContent.replace(/,/g, '')) - 1).toLocaleString();
+      } else {
+        dislikeBtn.classList.add('active');
+        dislikeCount.textContent = (parseInt(dislikeCount.textContent.replace(/,/g, '')) + 1).toLocaleString();
+        
+        // If like was active, remove it
+        if (likeBtn.classList.contains('active')) {
+          likeBtn.classList.remove('active');
+          likeCount.textContent = (parseInt(likeCount.textContent.replace(/,/g, '')) - 1).toLocaleString();
+        }
+      }
+    }
+
+    // Share video
+    function shareVideo() {
+      if (navigator.share) {
+        navigator.share({
+          title: videoTitle.textContent,
+          text: videoDescription.textContent,
+          url: window.location.href
+        })
+        .catch(error => console.log('Error sharing:', error));
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        alert('Share this video: ' + window.location.href);
+      }
+    }
+
+    // Save video
+    function saveVideo() {
+      alert('Video saved to your favorites!');
+      saveBtn.textContent = '💾 Saved';
+      setTimeout(() => {
+        saveBtn.textContent = '💾 Save';
+      }, 2000);
+    }
+
+    // Load comments
+    function loadComments() {
+      commentsList.innerHTML = '';
+      commentsCount.textContent = `${sampleComments.length} Comments`;
+      
+      sampleComments.forEach(comment => {
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment';
+        
+        commentElement.innerHTML = `
+          <div class="comment-author">${comment.author}</div>
+          <div class="comment-text">${comment.text}</div>
+          <div class="comment-actions">
+            <button class="comment-action">👍 ${comment.likes}</button>
+            <button class="comment-action">👎</button>
+            <button class="comment-action">Reply</button>
+          </div>
+        `;
+        
+        commentsList.appendChild(commentElement);
+      });
+    }
+
+    // Add a comment
+    function addComment(text) {
+      const commentElement = document.createElement('div');
+      commentElement.className = 'comment';
+      
+      commentElement.innerHTML = `
+        <div class="comment-author">You</div>
+        <div class="comment-text">${text}</div>
+        <div class="comment-actions">
+          <button class="comment-action">👍 0</button>
+          <button class="comment-action">👎</button>
+          <button class="comment-action">Reply</button>
+        </div>
+      `;
+      
+      commentsList.prepend(commentElement);
+      
+      // Update comments count
+      const currentCount = parseInt(commentsCount.textContent);
+      commentsCount.textContent = `${currentCount + 1} Comments`;
+    }
+
+    // Initialize the app
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
